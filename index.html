@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Caixa Simples - Gestão para Microempreendedores</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .alto-contraste {
+            background-color: #000 !important;
+            color: #ff0 !important;
+        }
+        .alto-contraste button {
+            background-color: #ff0 !important;
+            color: #000 !important;
+            border: 2px solid #ff0;
+        }
+        .alto-contraste .bg-white {
+            background-color: #111 !important;
+            color: #fff !important;
+            border: 2px solid #ff0;
+        }
+    </style>
+</head>
+<body id="corpo-pagina" class="bg-slate-100 text-slate-800 font-sans min-h-screen flex flex-col transition-all duration-300">
+
+    <!-- CABEÇALHO ACESSÍVEL -->
+    <header class="bg-blue-700 text-white shadow-md p-4 flex flex-wrap justify-between items-center">
+        <div class="flex items-center space-x-3">
+            <i class="fa-solid fa-store text-3xl"></i>
+            <h1 class="text-2xl font-bold">Meu Caixa Simples</h1>
+        </div>
+        <div class="flex items-center space-x-2 mt-2 sm:mt-0">
+            <button onclick="mudarFonte(2)" class="bg-blue-800 hover:bg-blue-900 px-3 py-2 rounded text-lg font-bold" title="Aumentar Letra">A+</button>
+            <button onclick="mudarFonte(-2)" class="bg-blue-800 hover:bg-blue-900 px-3 py-2 rounded text-sm font-bold" title="Diminuir Letra">A-</button>
+            <button onclick="alternarContraste()" class="bg-amber-500 hover:bg-amber-600 text-slate-900 px-3 py-2 rounded font-bold" title="Alto Contraste"><i class="fa-solid fa-circle-half-stroke"></i> Contraste</button>
+        </div>
+    </header>
+
+    <!-- CONTEÚDO PRINCIPAL -->
+    <main class="flex-grow container mx-auto p-4 max-w-4xl">
+        
+        <!-- MENU DE OPÇÕES (BOTÕES GRANDES) -->
+        <div id="menu-principal" class="grid grid-cols-1 sm:grid-cols-2 gap-6 my-6">
+            <button onclick="mostrarTela('venda')" class="bg-emerald-600 hover:bg-emerald-700 text-white p-8 rounded-2xl shadow-lg flex flex-col items-center justify-center transition transform hover:scale-105 cursor-pointer">
+                <i class="fa-solid fa-cash-register text-5xl mb-3"></i>
+                <span class="text-2xl font-bold">Registrar Venda</span>
+            </button>
+
+            <button onclick="mostrarTela('estoque')" class="bg-blue-600 hover:bg-blue-700 text-white p-8 rounded-2xl shadow-lg flex flex-col items-center justify-center transition transform hover:scale-105 cursor-pointer">
+                <i class="fa-solid fa-boxes-stacked text-5xl mb-3"></i>
+                <span class="text-2xl font-bold">Ver Estoque</span>
+            </button>
+
+            <button onclick="mostrarTela('produto')" class="bg-purple-600 hover:bg-purple-700 text-white p-8 rounded-2xl shadow-lg flex flex-col items-center justify-center transition transform hover:scale-105 cursor-pointer">
+                <i class="fa-solid fa-circle-plus text-5xl mb-3"></i>
+                <span class="text-2xl font-bold">Cadastrar Produto</span>
+            </button>
+
+            <button onclick="mostrarTela('caixa')" class="bg-amber-600 hover:bg-amber-700 text-white p-8 rounded-2xl shadow-lg flex flex-col items-center justify-center transition transform hover:scale-105 cursor-pointer">
+                <i class="fa-solid fa-wallet text-5xl mb-3"></i>
+                <span class="text-2xl font-bold">Caixa do Dia</span>
+            </button>
+        </div>
+
+        <!-- TELA 1: REGISTRAR VENDA -->
+        <div id="tela-venda" class="hidden bg-white p-6 rounded-2xl shadow-lg">
+            <h2 class="text-2xl font-bold text-blue-700 mb-4 border-b pb-2"><i class="fa-solid fa-cash-register"></i> Registrar Nova Venda</h2>
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-lg font-bold mb-2">Selecione o Produto:</label>
+                    <select id="venda-produto" class="w-full p-4 border-2 border-slate-300 rounded-xl text-xl bg-slate-50">
+                        <option value="">-- Escolha um produto --</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-lg font-bold mb-2">Quantidade:</label>
+                    <input type="number" id="venda-qtd" value="1" min="1" class="w-full p-4 border-2 border-slate-300 rounded-xl text-xl">
+                </div>
+                <div class="flex space-x-4 pt-4">
+                    <button onclick="efetuarVenda()" class="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white p-4 rounded-xl text-xl font-bold shadow">Concluir Venda</button>
+                    <button onclick="voltarMenu()" class="bg-slate-400 hover:bg-slate-500 text-white px-6 py-4 rounded-xl text-xl font-bold">Voltar</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- TELA 2: VER ESTOQUE -->
+        <div id="tela-estoque" class="hidden bg-white p-6 rounded-2xl shadow-lg">
+            <h2 class="text-2xl font-bold text-blue-700 mb-4 border-b pb-2"><i class="fa-solid fa-boxes-stacked"></i> Produtos em Estoque</h2>
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="bg-slate-200 text-slate-700 text-lg">
+                            <th class="p-3">Produto</th>
+                            <th class="p-3">Preço (R$)</th>
+                            <th class="p-3">Qtd</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tabela-estoque-corpo" class="text-lg">
+                        <!-- Itens inseridos via JS -->
+                    </tbody>
+                </table>
+            </div>
+            <div class="mt-6">
+                <button onclick="voltarMenu()" class="bg-slate-400 hover:bg-slate-500 text-white px-6 py-4 rounded-xl text-xl font-bold w-full">Voltar ao Menu</button>
+            </div>
+        </div>
+
+        <!-- TELA 3: CADASTRAR PRODUTO -->
+        <div id="tela-produto" class="hidden bg-white p-6 rounded-2xl shadow-lg">
+            <h2 class="text-2xl font-bold text-blue-700 mb-4 border-b pb-2"><i class="fa-solid fa-circle-plus"></i> Cadastrar Novo Produto</h2>
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-lg font-bold mb-2">Nome do Produto:</label>
+                    <input type="text" id="novo-nome" placeholder="Ex: Café 500g" class="w-full p-4 border-2 border-slate-300 rounded-xl text-xl">
+                </div>
+                <div>
+                    <label class="block text-lg font-bold mb-2">Preço Unitário (R$):</label>
+                    <input type="number" step="0.01" id="novo-preco" placeholder="0.00" class="w-full p-4 border-2 border-slate-300 rounded-xl text-xl">
+                </div>
+                <div>
+                    <label class="block text-lg font-bold mb-2">Quantidade Inicial:</label>
+                    <input type="number" id="novo-qtd" value="10" class="w-full p-4 border-2 border-slate-300 rounded-xl text-xl">
+                </div>
+                <div class="flex space-x-4 pt-4">
+                    <button onclick="salvarProduto()" class="flex-1 bg-purple-600 hover:bg-purple-700 text-white p-4 rounded-xl text-xl font-bold shadow">Salvar Produto</button>
+                    <button onclick="voltarMenu()" class="bg-slate-400 hover:bg-slate-500 text-white px-6 py-4 rounded-xl text-xl font-bold">Voltar</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- TELA 4: CAIXA DO DIA -->
+        <div id="tela-caixa" class="hidden bg-white p-6 rounded-2xl shadow-lg">
+            <h2 class="text-2xl font-bold text-blue-700 mb-4 border-b pb-2"><i class="fa-solid fa-wallet"></i> Resumo do Caixa do Dia</h2>
+            <div class="bg-emerald-50 border-2 border-emerald-500 p-6 rounded-2xl text-center mb-6">
+                <p class="text-lg text-emerald-800 font-bold">TOTAL VENDIDO HOJE</p>
+                <p id="total-caixa" class="text-4xl font-extrabold text-emerald-600 mt-2">R$ 0,00</p>
+            </div>
+            <div class="mb-4">
+                <h3 class="font-bold text-lg mb-2">Histórico de Vendas:</h3>
+                <ul id="lista-historico" class="divide-y divide-slate-200 border rounded-xl p-3 max-h-48 overflow-y-auto text-lg">
+                    <li class="py-2 text-slate-500">Nenhuma venda registrada hoje.</li>
+                </ul>
+            </div>
+            <button onclick="voltarMenu()" class="bg-slate-400 hover:bg-slate-500 text-white px-6 py-4 rounded-xl text-xl font-bold w-full">Voltar ao Menu</button>
+        </div>
+
+    </main>
+
+    <!-- RODAPÉ -->
+    <footer class="bg-slate-800 text-white text-center p-4 mt-auto text-sm">
+        <p>Projeto Extensionista - Sistemas de Informação e Sociedade</p>
+    </footer>
+
+    <!-- SCRIPT DE FUNCIONALIDADE -->
+    <script>
+        // Banco de dados simulado local
+        let produtos = [
+            { id: 1, nome: "Arroz 5kg", preco: 25.50, qtd: 15 },
+            { id: 2, nome: "Feijão 1kg", preco: 8.00, qtd: 20 },
+            { id: 3, nome: "Óleo de Soja", preco: 6.50, qtd: 10 }
+        ];
+        let historicoVendas = [];
+        let totalFaturado = 0;
+        let tamanhoFonteAtual = 100;
+
+        function mostrarTela(tela) {
+            document.getElementById('menu-principal').classList.add('hidden');
+            document.getElementById('tela-venda').classList.add('hidden');
+            document.getElementById('tela-estoque').classList.add('hidden');
+            document.getElementById('tela-produto').classList.add('hidden');
+            document.getElementById('tela-caixa').classList.add('hidden');
+
+            if (tela === 'venda') {
+                document.getElementById('tela-venda').classList.remove('hidden');
+                atualizarSelectProdutos();
+            } else if (tela === 'estoque') {
+                document.getElementById('tela-estoque').classList.remove('hidden');
+                carregarTabelaEstoque();
+            } else if (tela === 'produto') {
+                document.getElementById('tela-produto').classList.remove('hidden');
+            } else if (tela === 'caixa') {
+                document.getElementById('tela-caixa').classList.remove('hidden');
+                atualizarCaixaUI();
+            }
+        }
+
+        function voltarMenu() {
+            document.getElementById('menu-principal').classList.remove('hidden');
+            document.getElementById('tela-venda').classList.add('hidden');
+            document.getElementById('tela-estoque').classList.add('hidden');
+            document.getElementById('tela-produto').classList.add('hidden');
+            document.getElementById('tela-caixa').classList.add('hidden');
+        }
+
+        function atualizarSelectProdutos() {
+            let select = document.getElementById('venda-produto');
+            select.innerHTML = '<option value="">-- Escolha um produto --</option>';
+            produtos.forEach(p => {
+                select.innerHTML += `<option value="${p.id}">${p.nome} - R$ ${p.preco.toFixed(2)} (Estoque: ${p.qtd})</option>`;
+            });
+        }
+
+        function carregarTabelaEstoque() {
+            let corpo = document.getElementById('tabela-estoque-corpo');
+            corpo.innerHTML = '';
+            produtos.forEach(p => {
+                let corQtd = p.qtd <= 3 ? 'text-red-600 font-bold' : '';
+                corpo.innerHTML += `
+                    <tr class="border-b">
+                        <td class="p-3">${p.nome}</td>
+                        <td class="p-3">R$ ${p.preco.toFixed(2)}</td>
+                        <td class="p-3 ${corQtd}">${p.qtd} un</td>
+                    </tr>
+                `;
+            });
+        }
+
+        function salvarProduto() {
+            let nome = document.getElementById('novo-nome').value;
+            let preco = parseFloat(document.getElementById('novo-preco').value);
+            let qtd = parseInt(document.getElementById('novo-qtd').value);
+
+            if (!nome || isNaN(preco) || isNaN(qtd)) {
+                alert('Por favor, preencha todos os campos corretamente!');
+                return;
+            }
+
+            produtos.push({ id: produtos.length + 1, nome, preco, qtd });
+            alert('Produto cadastrado com sucesso!');
+            document.getElementById('novo-nome').value = '';
+            document.getElementById('novo-preco').value = '';
+            voltarMenu();
+        }
+
+        function efetuarVenda() {
+            let idProd = parseInt(document.getElementById('venda-produto').value);
+            let qtdVendida = parseInt(document.getElementById('venda-qtd').value);
+
+            let prod = produtos.find(p => p.id === idProd);
+            if (!prod) {
+                alert('Selecione um produto válido!');
+                return;
+            }
+
+            if (prod.qtd < qtdVendida) {
+                alert('Quantidade em estoque insuficiente!');
+                return;
+            }
+
+            prod.qtd -= qtdVendida;
+            let valorVenda = prod.preco * qtdVendida;
+            totalFaturado += valorVenda;
+
+            historicoVendas.unshift(`${qtdVendida}x ${prod.nome} - R$ ${valorVenda.toFixed(2)}`);
+            alert(`Venda realizada com sucesso! Total: R$ ${valorVenda.toFixed(2)}`);
+            voltarMenu();
+        }
+
+        function atualizarCaixaUI() {
+            document.getElementById('total-caixa').innerText = `R$ ${totalFaturado.toFixed(2)}`;
+            let lista = document.getElementById('lista-historico');
+            if (historicoVendas.length === 0) {
+                lista.innerHTML = '<li class="py-2 text-slate-500">Nenhuma venda registrada hoje.</li>';
+            } else {
+                lista.innerHTML = '';
+                historicoVendas.forEach(v => {
+                    lista.innerHTML += `<li class="py-2 px-2 border-b">🛒 ${v}</li>`;
+                });
+            }
+        }
+
+        function mudarFonte(valor) {
+            tamanhoFonteAtual += valor * 5;
+            if(tamanhoFonteAtual < 80) tamanhoFonteAtual = 80;
+            if(tamanhoFonteAtual > 150) tamanhoFonteAtual = 150;
+            document.body.style.fontSize = tamanhoFonteAtual + '%';
+        }
+
+        function alternarContraste() {
+            document.body.classList.toggle('alto-contraste');
+        }
+    </script>
+</body>
+</html>

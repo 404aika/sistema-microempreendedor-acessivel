@@ -1,1 +1,0 @@
-# sistema-microempreendedor-acessivel
